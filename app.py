@@ -1,18 +1,15 @@
-import gdown
+import requests
 import pandas as pd
 import streamlit as st
-import os
+import io
 
-# Nama file untuk disimpan
-file_name = 'FINAL_CLUSTER.csv'
+# ID file di Google Drive
+file_id = '1VQH8OEgBZcZTTks0ZfeB0RLrFiZbyllo'
+url = f'https://drive.google.com/uc?id={file_id}'
 
-# Periksa apakah file sudah ada di direktori lokal
-if not os.path.exists(file_name):
-    # Link untuk mengunduh file dari Google Drive
-    gdown.download('https://drive.google.com/uc?id=1VQH8OEgBZcZTTks0ZfeB0RLrFiZbyllo', file_name, quiet=False)
-
-# Baca file CSV
-data = pd.read_csv(file_name, sep="*")
+# Baca file CSV dari Google Drive
+response = requests.get(url)
+data = pd.read_csv(io.StringIO(response.text), sep="*")
 
 # Header untuk aplikasi
 st.markdown("<h1 style='text-align: center; color: #6A0DAD;'>🌟 Toko Gen-Z 🌟</h1>", unsafe_allow_html=True)
@@ -46,7 +43,7 @@ if st.button('🔍 **Cari Produk**'):
     # Tab 1: Rekomendasi Produk
     with tab1:
         st.subheader('🎁 **Rekomendasi Produk Terbaik**')
-        
+
         # Prioritaskan produk dengan rating 5
         five_star_products = final_recommendations[final_recommendations['rating'] == 5]
         other_products = final_recommendations[final_recommendations['rating'] < 5]
