@@ -1,15 +1,24 @@
-import requests
 import pandas as pd
 import streamlit as st
-import io
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# ID file di Google Drive
-file_id = '1VQH8OEgBZcZTTks0ZfeB0RLrFiZbyllo'
-url = f'https://drive.google.com/uc?id={file_id}'
 
-# Baca file CSV dari Google Drive
-response = requests.get(url)
-data = pd.read_csv(io.StringIO(response.text), sep="*")
+# Membaca setiap file CSV
+data1 = pd.read_csv("FINAL_CLUSTER_part_1.csv", sep='*')
+data2 = pd.read_csv("FINAL_CLUSTER_part_2.csv", sep='*')
+data3 = pd.read_csv("FINAL_CLUSTER_part_3.csv", sep='*')
+data4 = pd.read_csv("FINAL_CLUSTER_part_4.csv", sep='*')
+data5 = pd.read_csv("FINAL_CLUSTER_part_5.csv", sep='*')
+data6 = pd.read_csv("FINAL_CLUSTER_part_6.csv", sep='*')
+data7 = pd.read_csv("FINAL_CLUSTER_part_7.csv", sep='*')
+data8 = pd.read_csv("FINAL_CLUSTER_part_8.csv", sep='*')
+data9 = pd.read_csv("FINAL_CLUSTER_part_9.csv", sep='*')
+data10 = pd.read_csv("FINAL_CLUSTER_part_10.csv", sep='*')
+
+# Menggabungkan semua DataFrame menjadi satu
+data = pd.concat([data1, data2, data3, data4, data5, data6, data7, data8, data9, data10], ignore_index=True)
+
 
 # Header untuk aplikasi
 st.markdown("<h1 style='text-align: center; color: #6A0DAD;'>🌟 Toko Gen-Z 🌟</h1>", unsafe_allow_html=True)
@@ -43,23 +52,22 @@ if st.button('🔍 **Cari Produk**'):
     # Tab 1: Rekomendasi Produk
     with tab1:
         st.subheader('🎁 **Rekomendasi Produk Terbaik**')
-
         # Prioritaskan produk dengan rating 5
         five_star_products = final_recommendations[final_recommendations['rating'] == 5]
         other_products = final_recommendations[final_recommendations['rating'] < 5]
-
+        
         top_products = pd.concat([five_star_products, other_products])  # Menggabungkan menggunakan pd.concat
 
         if not top_products.empty:
             for index, row in top_products.head(max_display).iterrows():
-                sold_formatted = f"{int(row['sold']):,.0f}".replace(",", ".")
+                sold_formatted = f"{int(row['sold']):,}".replace(",", ".")
                 st.markdown(
                     f"""
                     <div style="border: 2px solid #DDA0DD; border-radius: 10px; padding: 15px; margin: 10px 0; background-color: #F9F0FF;">
                         <h4 style="color: #4B0082;">🛍️ Nama Produk: <span style="color: #8A2BE2;">{row['clean_name']}</span></h4>
                         <p style="color: #5F9EA0;">📍 Lokasi: <strong>{row['location']}</strong></p>
                         <p style="color: #5F9EA0;">⭐ Rating: <strong>{row['rating']}</strong> | Terjual: <strong>{sold_formatted}</strong></p>
-                        <p style="color: #8B4513;">💸 Harga: <strong>Rp{int(row['price']):,.0f}</strong></p>
+                        <p style="color: #8B4513;">💸 Harga: <strong>Rp{row['price']}</strong></p>
                     </div>
                     """, unsafe_allow_html=True
                 )
@@ -85,18 +93,15 @@ if st.button('🔍 **Cari Produk**'):
 
         if not popular_products.empty:
             for index, row in popular_products.iterrows():
-                sold_formatted = f"{int(row['sold']):,.0f}".replace(",", ".")
+                sold_formatted = f"{int(row['sold']):,}".replace(",", ".")
                 st.markdown(
                     f"""
                     <div style="border: 2px solid #DDA0DD; border-radius: 10px; padding: 15px; margin: 10px 0; background-color: #F9F0FF;">
                         <h4 style="color: #4B0082;">🛍️ Nama Produk: <span style="color: #8A2BE2;">{row['clean_name']}</span></h4>
                         <p style="color: #5F9EA0;">⭐ Rating: <strong>{row['rating']}</strong> | Terjual: <strong>{sold_formatted}</strong></p>
-                        <p style="color: #8B4513;">💸 Harga: <strong>Rp{int(row['price']):,.0f}</strong></p>
+                        <p style="color: #8B4513;">💸 Harga: <strong>Rp{row['price']}</strong></p>
                     </div>
                     """, unsafe_allow_html=True
                 )
         else:
             st.markdown("<p style='color: #DC143C;'>Tidak ada produk yang ditemukan untuk kategori ini.</p>", unsafe_allow_html=True)
-
-# Menambahkan footer
-st.markdown("<footer style='text-align: center; color: #333333;'>Terima kasih telah mengunjungi Toko Gen-Z! 🛒</footer>", unsafe_allow_html=True)
